@@ -38,7 +38,7 @@ mongoose.connection.once('open',function(){
   app.models = require('./models/index.js');
   
   // Load the rest-ful service routes
-  var routes = require('./routes.js');
+  var routes = require('./controllers/index.js');
   _.each(routes, function(controller, route){
     app.use(route, controller(app, route));
   });
