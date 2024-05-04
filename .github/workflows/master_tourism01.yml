@@ -1,6 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy# More GitHub Actions for Azure: https://github.com/Azure/actions
 name: Build and deploy Node.js app to Azure Web App - tourism01
 
 on:
@@ -11,46 +9,44 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
-
+    runs-on: windows-latest  # Run the build job on Windows environment
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4  # Checkout the code from the repository
 
       - name: Set up Node.js version
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v3  # Use actions/setup-node action
         with:
-          node-version: '18.x'
+          node-version: '18.x'  # Specify Node.js version (update not required)
 
       - name: npm install, build, and test
-        run: |
+        run: |  # Multi-line command using pipeline syntax
           npm install
           npm run build --if-present
           npm run test --if-present
-      
+
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3  # Upload build artifacts
         with:
-          name: node-app
-          path: .
+          name: node-app  # Name of the artifact
+          path: .         # Upload everything from the current directory
 
   deploy:
-    runs-on: ubuntu-latest
-    needs: build
+    runs-on: ubuntu-latest  # Run the deployment job on Ubuntu environment
+    needs: build        # Wait for the build job to complete before deployment
     environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+      name: 'Production'  # Set the deployment environment name
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}  # Set environment URL (output from deployment step)
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3  # Download build artifacts
         with:
-          name: node-app
-      
+          name: node-app  # Name of the artifact to download
+
       - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v2
-        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2  # Use Azure Web App deploy action
+        id: deploy-to-webapp  # Assign an ID for referencing outputs later
         with:
-          app-name: 'tourism01'
-          slot-name: 'Production'
-          package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EE2F92EF437A4C0FA24F7269910B8D0F }}
+          app-name: 'tourism01'        # Name of the Azure Web App
+          slot-name: 'Production'      # Deployment slot (Production in this case)
+          package: .                  # Deploy the downloaded artifacts
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EE2F92EF437A4C0FA24F7269910B8D0F }}  # Publish profile stored in a secret
